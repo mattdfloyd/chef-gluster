@@ -17,5 +17,5 @@
 # limitations under the License.
 #
 
-include_recipe "gluster::server_install"
-include_recipe "gluster::server_setup"
+include_recipe 'gluster::server_install'
+include_recipe 'gluster::server_setup'

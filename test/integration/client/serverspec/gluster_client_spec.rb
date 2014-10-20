@@ -9,7 +9,7 @@ RSpec.configure do |c|
   end
 end
 
-package_name = 
+package_name =
   case os[:family]
   when'RedHat'
     'glusterfs'

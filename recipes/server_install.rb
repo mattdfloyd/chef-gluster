@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe "gluster::repository"
+include_recipe 'gluster::repository'
 
 # Install dependencies
 node['gluster']['server']['dependencies'].each do |d|
@@ -28,6 +28,6 @@ end
 package node['gluster']['server']['package']
 
 # Make sure the service is started
-service "glusterd" do
+service 'glusterd' do
   action [:enable, :start]
 end

@@ -19,18 +19,18 @@
 
 # Server package
 case node['platform']
-when "ubuntu"
-  default['gluster']['server']['package'] = "glusterfs-server"
-when "redhat","centos"
-  default['gluster']['server']['package'] = "glusterfs-server"
+when 'ubuntu'
+  default['gluster']['server']['package'] = 'glusterfs-server'
+when 'redhat', 'centos'
+  default['gluster']['server']['package'] = 'glusterfs-server'
 end
 
 # Package dependencies
 case node['platform']
-when "ubuntu"
-  default['gluster']['server']['dependencies'] = [ "xfsprogs" ]
-when "redhat","centos"
-  default['gluster']['server']['dependencies'] = [ "xfsprogs" ]
+when 'ubuntu'
+  default['gluster']['server']['dependencies'] = ['xfsprogs']
+when 'redhat', 'centos'
+  default['gluster']['server']['dependencies'] = ['xfsprogs']
 end
 
 # Default path to use for mounting bricks

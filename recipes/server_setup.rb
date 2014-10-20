@@ -23,13 +23,13 @@ if node['gluster']['server'].attribute?('disks')
     # If a partition doesn't exist, create it
     if `fdisk -l 2> /dev/null | grep '/dev/#{d}1'`.empty?
       # Pass commands to fdisk to create a new partition
-      bash "create partition" do
+      bash 'create partition' do
         code "(echo n; echo p; echo 1; echo; echo; echo w) | fdisk /dev/#{d}"
         action :run
       end
-      
+
       # Format the new partition
-      execute "format partition" do
+      execute 'format partition' do
         command "mkfs.xfs -i size=512 /dev/#{d}1"
         action :run
       end
@@ -44,14 +44,14 @@ if node['gluster']['server'].attribute?('disks')
     # Mount the partition and add to /etc/fstab
     mount "#{node['gluster']['server']['brick_mount_path']}/#{d}1" do
       device "/dev/#{d}1"
-      fstype "xfs"
+      fstype 'xfs'
       action [:mount, :enable]
     end
   end
 end
 
 # Create and start volumes
-bricks = Array.new
+bricks = []
 node['gluster']['server']['volumes'].each do |volume_name, volume_values|
   # If the node is configured as a peer for the volume, create directories to use as bricks
   if volume_values['peers'].include? node['fqdn']
@@ -90,7 +90,7 @@ node['gluster']['server']['volumes'].each do |volume_name, volume_values|
     end
 
     # Create the volume if it doesn't exist
-    unless File.exists?("/var/lib/glusterd/vols/#{volume_name}/info")
+    unless File.exist?("/var/lib/glusterd/vols/#{volume_name}/info")
       # Create a hash of peers and their bricks
       volume_bricks = {}
       brick_count = 0
@@ -106,7 +106,7 @@ node['gluster']['server']['volumes'].each do |volume_name, volume_values|
       # Create option string
       options = String.new
       case volume_values['volume_type']
-      when "replicated"
+      when 'replicated'
         # Ensure the trusted pool has the correct number of bricks available
         unless brick_count == volume_values['replica_count']
           Chef::Log.warn("Correct number of bricks not available for volume #{volume_name}. Skipping...")
@@ -117,7 +117,7 @@ node['gluster']['server']['volumes'].each do |volume_name, volume_values|
             options << " #{peer}:#{bricks.first}"
           end
         end
-      when "distributed-replicated"
+      when 'distributed-replicated'
         # Ensure the trusted pool has the correct number of bricks available
         unless brick_count == (volume_values['replica_count'] * volume_values['peers'].count)
           Chef::Log.warn("Correct number of bricks not available for volume #{volume_name}. Skipping...")
@@ -126,12 +126,12 @@ node['gluster']['server']['volumes'].each do |volume_name, volume_values|
           options = "replica #{volume_values['replica_count']}"
           for i in 1..volume_values['replica_count']
             volume_bricks.each do |peer, bricks|
-              options << " #{peer}:#{bricks[i-1]}"
+              options << " #{peer}:#{bricks[i - 1]}"
             end
           end
         end
       end
-      
+
       execute "gluster volume create #{volume_name} #{options}" do
         action :run
       end
@@ -164,7 +164,7 @@ node['gluster']['server']['volumes'].each do |volume_name, volume_values|
       execute "gluster volume quota #{volume_name} limit-usage / #{volume_values['quota']}" do
         action :run
         not_if "egrep '^features.limit-usage=/:#{volume_values['quota']}$' /var/lib/glusterd/vols/#{volume_name}/info"
-      end      
+      end
     end
   end
 end

@@ -17,5 +17,5 @@
 # limitations under the License.
 #
 
-include_recipe "gluster::client_install"
-include_recipe "gluster::client_mount"
+include_recipe 'gluster::client_install'
+include_recipe 'gluster::client_mount'
