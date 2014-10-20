@@ -4,6 +4,9 @@
 #
 # Copyright 2014, Biola University
 #
+# Copyright 2014, Jackson River
+# Modified by Ben Clark <benjamin.clark@jacksonriver.com>
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -18,18 +21,18 @@
 #
 
 # Server package
-case node['platform']
-when 'ubuntu'
+case node['platform_family']
+when 'debian'
   default['gluster']['server']['package'] = 'glusterfs-server'
-when 'redhat', 'centos'
+when 'rhel'
   default['gluster']['server']['package'] = 'glusterfs-server'
 end
 
 # Package dependencies
-case node['platform']
-when 'ubuntu'
+case node['platform_family']
+when 'debian'
   default['gluster']['server']['dependencies'] = ['xfsprogs']
-when 'redhat', 'centos'
+when 'rhel'
   default['gluster']['server']['dependencies'] = ['xfsprogs']
 end
 
