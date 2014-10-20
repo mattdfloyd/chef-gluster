@@ -4,6 +4,9 @@
 #
 # Copyright 2014, Biola University
 #
+# Copyright 2014, Jackson River
+# Modified by Ben Clark <benjamin.clark@jacksonriver.com>
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -17,23 +20,21 @@
 # limitations under the License.
 #
 
-case node['platform']
-when 'ubuntu'
-  apt_repository 'ubuntu-glusterfs-3.4' do
-    uri 'http://ppa.launchpad.net/semiosis/ubuntu-glusterfs-3.4/ubuntu'
-    distribution node['lsb']['codename']
-    components ['main']
-    keyserver 'keyserver.ubuntu.com'
-    key '774BAC4D'
-    deb_src true
-    not_if do
-      File.exist?('/etc/apt/sources.list.d/ubuntu-glusterfs-3.4.list')
-    end
+case node['platform_family']
+when 'debian'
+  apt_repository node['gluster']['repository']['apt']['repo_name'] do
+    uri node['gluster']['repository']['apt']['uri']
+    distribution node['gluster']['repository']['apt']['distribution']
+    components node['gluster']['repository']['apt']['components']
+    keyserver node['gluster']['repository']['apt']['keyserver']
+    key node['gluster']['repository']['apt']['key']
+    deb_src node['gluster']['repository']['apt']['deb_src']
   end
-when 'redhat', 'centos'
-  yum_repository 'glusterfs' do
-    url 'http://download.gluster.org/pub/gluster/glusterfs/3.4/LATEST/EPEL.repo/epel-$releasever/$basearch/'
-    gpgcheck false
+when 'rhel'
+  yum_repository node['gluster']['repository']['yum']['repo_name'] do
+    url node['gluster']['repository']['yum']['url']
+    gpgcheck node['gluster']['repository']['yum']['gpgcheck']
+    gpgkey node['gluster']['repository']['yum']['gpgkey']
     action :create
   end
 end
